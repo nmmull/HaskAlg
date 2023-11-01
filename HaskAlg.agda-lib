@@ -1,0 +1,3 @@
+name: HaskAlg
+depend: standard-library
+include: .
