@@ -1,8 +1,10 @@
 module HaskAlg where
 
+open import Data.Product using (_×_; proj₁; proj₂; _,_)
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; cong; sym)
 open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; step-≡; _∎)
+
 
 postulate
   f-ext : ∀ {a b : Set} {f g : a → b} →
@@ -51,27 +53,17 @@ Fid→Fcomp fmap id-prf {f = f} {g = g} =
     fmap f ∘ fmap g
   ∎
 
-record Functor₁ (F : Set → Set) : Set₁ where
-  field
-    fmap : Fmap F
-    fmap-id : Fmap-id fmap
+isFunctorial₁ : ∀ {F} (fmap : Fmap F) → Set₁
+isFunctorial₁ fmap = Fmap-id fmap
 
-record Functor₂ (F : Set → Set) : Set₁ where
-  field
-    fmap : Fmap F
-    fmap-id : Fmap-id fmap
-    fmap-comp : Fmap-comp fmap
+isFunctorial₂ : ∀ {F} (fmap : Fmap F) → Set₁
+isFunctorial₂ fmap = Fmap-id fmap × Fmap-comp fmap
 
-F₂→F₁ : ∀ {F} → Functor₂ F → Functor₁ F
-F₂→F₁ isFun = record { fmap = fmap ; fmap-id = fmap-id } where
-  fmap = Functor₂.fmap isFun
-  fmap-id = Functor₂.fmap-id isFun
+isF₂→isF₁ : ∀ {F} (fmap : Fmap F) → isFunctorial₂ fmap → isFunctorial₁ fmap
+isF₂→isF₁ fmap = proj₁
 
-F₁→F₂ : ∀ {F} → Functor₁ F → Functor₂ F
-F₁→F₂ Fun = record { fmap = fmap ; fmap-id = fmap-id ; fmap-comp = fmap-comp } where
-  fmap = Functor₁.fmap Fun
-  fmap-id = Functor₁.fmap-id Fun
-  fmap-comp = Fid→Fcomp fmap fmap-id
+isF₁→isF₂ : ∀ {F} (fmap : Fmap F) → isFunctorial₁ fmap → isFunctorial₂ fmap
+isF₁→isF₂ fmap prf = prf , Fid→Fcomp fmap prf
 
 Pure : (F : Set → Set) → Set₁
 Pure F = {a : Set} → a → F a
