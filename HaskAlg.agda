@@ -116,8 +116,8 @@ module Theorems
       fmap f ∘ fmap g
     ∎
 
-  Fid+Fcomp→Free : Fmap-id fmap → Fmap-comp fmap → Free fmap
-  Fid+Fcomp→Free id-prf comp-prf {f = f} {j = j} {g = g} {h = h} eq =
+  Fcomp→Free : Fmap-comp fmap → Free fmap
+  Fcomp→Free comp-prf {f = f} {j = j} {g = g} {h = h} eq =
     begin
       fmap f ∘ fmap g
     ≡⟨ sym comp-prf ⟩
