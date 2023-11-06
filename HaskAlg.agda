@@ -45,11 +45,6 @@ variable
 
 -- Functor Laws
 
-Free : Fmap F → Set₁
-Free fmap = ∀ {a b c d f j} {g : a → b} {h : d → c} →
-  f ∘ g ≡ h ∘ j →
-  fmap f ∘ fmap g ≡ fmap h ∘ fmap j
-
 Fmap-id : Fmap F → Set₁
 Fmap-id fmap = ∀ {a} →
   fmap {a} id ≡ id
@@ -57,6 +52,11 @@ Fmap-id fmap = ∀ {a} →
 Fmap-comp : Fmap F → Set₁
 Fmap-comp fmap = ∀ {a b c} {f : b → c} {g : a → b} →
   fmap (f ∘ g) ≡ fmap f ∘ fmap g
+
+Free : Fmap F → Set₁
+Free fmap = ∀ {a b c d f j} {g : a → b} {h : d → c} →
+  f ∘ g ≡ h ∘ j →
+  fmap f ∘ fmap g ≡ fmap h ∘ fmap j
 
 -- Applicative Laws
 
@@ -75,10 +75,6 @@ App-hom pure _<*>_ = ∀ {a b x} {f : a → b} →
 App-inter : Pure F → App F → Set₁
 App-inter {F} pure _<*>_ = ∀ {a b y} {u : F (a → b)} →
   u <*> pure y ≡ pure (λ f → f y) <*> u
-
--- Fmap-App₁ : Fmap F → App F → Set₁
--- Fmap-App₁ {F} fmap _<*>_ = ∀ {a b y} {x : F (a → b)} →
---   x <*> y ≡ fmap id x <*> y
 
 Fmap-App : Fmap F → Pure F → App F → Set₁
 Fmap-App fmap pure _<*>_ = ∀ {a b x} {f : a → b} →
@@ -120,5 +116,17 @@ module Theorems
       fmap f ∘ fmap g
     ∎
 
+  Fid+Fcomp→Free : Fmap-id fmap → Fmap-comp fmap → Free fmap
+  Fid+Fcomp→Free id-prf comp-prf {f = f} {j = j} {g = g} {h = h} eq =
+    begin
+      fmap f ∘ fmap g
+    ≡⟨ sym comp-prf ⟩
+      fmap (f ∘ g)
+    ≡⟨ cong fmap eq ⟩
+      fmap (h ∘ j)
+    ≡⟨ comp-prf ⟩
+      fmap h ∘ fmap j
+    ∎
+
   isApp→Fmap-App : isApp fmap pure _<*>_ → Fmap-App fmap pure _<*>_
-  isApp→Fmap-App ((id-prf , fcomp-prf) , (acomp-prf , hom-prf , inter-prf))= {!!}
+  isApp→Fmap-App ((id-prf , fcomp-prf) , (acomp-prf , hom-prf , inter-prf)) = {!!}
