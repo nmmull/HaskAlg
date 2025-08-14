@@ -53,6 +53,9 @@ Fmap-comp : Fmap F → Set₁
 Fmap-comp fmap = ∀ {a b c} {f : b → c} {g : a → b} →
   fmap (f ∘ g) ≡ fmap f ∘ fmap g
 
+isFunc : Fmap F → Set₁
+isFunc fmap = Fmap-id fmap × Fmap-comp fmap
+
 Free : Fmap F → Set₁
 Free fmap = ∀ {a b c d f j} {g : a → b} {h : d → c} →
   f ∘ g ≡ h ∘ j →
@@ -81,9 +84,6 @@ Fmap-App fmap pure _<*>_ = ∀ {a b x} {f : a → b} →
   fmap f x ≡ pure f <*> x
 
 -- Structures
-
-isFunc : Fmap F → Set₁
-isFunc fmap = Fmap-id fmap × Fmap-comp fmap
 
 isApp : Fmap F → Pure F → App F → Set₁
 isApp fmap pure app =
@@ -127,6 +127,22 @@ module Theorems
     ≡⟨ comp-prf ⟩
       fmap h ∘ fmap j
     ∎
+
+  Free→UniqueFunc : ∀ (f : Fmap F) → isFunc f → ∀ {a b} → f {a} {b} ≡ fmap {a} {b}
+  Free→UniqueFunc f func-prf = f-ext prf where
+    prf : ∀ {h} → f h ≡ fmap h
+    prf {h} =
+      begin
+        f h
+      ≡⟨ {!!} ⟩
+        f (id ∘ h)
+      ≡⟨ {!!} ⟩
+        f id ∘ fmap h
+      ≡⟨ {!!} ⟩
+        id ∘ fmap h
+      ≡⟨ {!!} ⟩
+        fmap h
+      ∎
 
   isApp→Fmap-App : isApp fmap pure _<*>_ → Fmap-App fmap pure _<*>_
   isApp→Fmap-App ((id-prf , fcomp-prf) , (acomp-prf , hom-prf , inter-prf)) = {!!}
